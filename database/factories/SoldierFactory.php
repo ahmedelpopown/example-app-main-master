@@ -1,0 +1,51 @@
+<?php
+
+namespace Database\Factories;
+
+use App\Models\Authority;
+use App\Models\Batch;
+use App\Models\Job;
+use App\Models\Regiment;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Soldier>
+ */
+class SoldierFactory extends Factory
+{
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        return [
+
+            'name' => $this->faker->name,
+            'police_number' => $this->faker->unique()->numerify('PN#####'),
+            'national_id' => $this->faker->unique()->numerify('##############'),
+            'date_of_conscription' => $this->faker->date(),
+            'discharge_from_conscription' => $this->faker->date(),
+            'governorate' => $this->faker->city,
+            'phone_number' => $this->faker->phoneNumber,
+            'medical_condition' => $this->faker->randomElement(['سليم', 'مصاب', 'مزمن']),
+            'confidentiality' => $this->faker->randomElement(['عادي', 'سري', 'سري جداً']),
+
+             'authority' => $this->faker->jobTitle,
+            'status' => 'working',
+            'notes' => $this->faker->optional()->sentence,
+            'special_case' => $this->faker->boolean,
+            'endLeave' => Carbon::create(2025, 4, 1)->format('Y-m-d'),
+
+            'start_date' => Carbon::createFromFormat('Y-m-d', '2025-04-01'),
+             'regiment_id' => Regiment::factory(), // يعمل فوج تلقائي لكل جندي
+            'batch_id' => Batch::inRandomOrder()->first()->id,
+            'authority_id' => Authority::inRandomOrder()->first()?->id, // ممكن تكون نل
+ 
+
+
+        ];
+    }
+}
