@@ -20,6 +20,7 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-header card_header_edit">
+               <h3 class="card-title" style="font-weight: bold; font-size: 28px;">بيانات الجنود في السرية: {{ $batchname->name }}</h3>
                         <style>
                             .card_header_edit{
                                text-align: right;
@@ -86,7 +87,7 @@
                                     <td>{{ $soldier->phone_number }}</td>
                                     <td>{{ $soldier->medical_condition }}</td>
                                     <td>{{ $soldier->batch?->name }}</td>
-                                    <td>{{ $soldier->job }}</td>
+                                    <td>{{ $soldier->job->name }}</td>
                                     <td>{{ $soldier->notes }}</td>
                                     <td>{{ $soldier->special_case }}</td>
                                     <td>{{ $soldier->start_date }}</td>

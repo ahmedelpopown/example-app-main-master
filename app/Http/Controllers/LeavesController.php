@@ -15,7 +15,7 @@ class LeavesController extends Controller
      */
     public function index()
     {
-        
+        $query = Soldier::with('regiment');
         $levees = Leave::whereHas('soldier', function ($query) {
             $query->where('status', 'leave'); // البحث عن الجنود الذين في إجازة
         })
@@ -23,7 +23,7 @@ class LeavesController extends Controller
         ->get();
         
         // dd($levees);
-    return view('leaves.index' ,compact('levees'));
+    return view('leaves.index' ,compact('levees','query'));
 
 
 

@@ -83,13 +83,9 @@
                     </form>
                   </td>
                   <td>
-                    <form class="update-status-form" data-id="{{ $soldier->id }}">
-                      <select name="status" class="status-select form-control">
-                        <option value="working" {{ $soldier->status == 'working' ? 'selected' : '' }}>في الخدمة</option>
-                        <option value="leave" {{ $soldier->status == 'leave' ? 'selected' : '' }}>إجازة</option>
-                      </select>
-                    </form>
-                  </td>
+            
+
+    </td>
                   <td>{{ $soldier->special_case }}</td>
                 </tr>
                 @endforeach
@@ -105,6 +101,50 @@
 @endsection
 
 @push('scripts-database')
+
+
+<script>
+$(document).ready(function() {
+
+// نتأكد إننا بنستقبل event التغيير على أي select جوا الفورم
+$('.update-status-form').on('change', '.status-select', function() {
+  // نجيب القيمة الجديدة
+  // const status = $(this).val();
+
+  // نجيب الـ form والأي دي منه
+  // const form = $(this).closest('.update-status-form');
+  // const id   = form.data('id');
+
+  // console.log('Updating soldier', id, 'to status', status);
+
+  // نبعت الطلب
+  // $.ajax({
+  //   url: `/soldiers/${id}/status`,
+  //   method: 'POST',
+  //   data: {
+  //     _token: $('meta[name="csrf-token"]').attr('content'),
+  //     status: status
+  //   },
+  //   success: function(response) {
+  //     console.log('Server responded:', response);
+  //     if (response.success) {
+  //       alert(response.message);
+  //     } else {
+  //       alert('حصل خطأ: ' + response.message);
+  //     }
+  //   },
+  //   error: function(xhr) {
+  //     console.error('AJAX error:', xhr.responseText);
+  //     alert('فشل الاتصال بالسيرفر');
+  //   }
+  // });
+
+});
+
+});
+
+
+</script>
   <!-- jQuery -->
   <script src="{{ asset('dashboard/plugins/jquery/jquery.min.js') }}"></script>
   <!-- Bootstrap 4 -->
@@ -128,8 +168,13 @@
   <!-- AdminLTE for demo purposes -->
   <script src="{{ asset('dashboard/dist/js/demo.js') }}"></script>
 
+
+
   <!-- Page specific script -->
   <script>
+
+
+
     $(function () {
     $("#example1").DataTable({
       "responsive": true, "lengthChange": false, "autoWidth": false,
@@ -145,29 +190,7 @@
       "responsive": true,
     });
           // تحديث الحالة باستخدام AJAX
-          $('.status-select').on('change', function () {
-        let form = $(this).closest('.update-status-form');
-        let soldierId = form.data('id');
-        let status = $(this).val();
-
-        $.ajax({
-          url: `/soldiers/${soldierId}/update-status`,
-          method: 'POST',
-          data: {
-            _method: 'PUT',
-            _token: '{{ csrf_token() }}',
-            status: status
-          },
-          success: function (response) {
-            if (response.success) {
-              alert(response.message);
-            }
-          },
-          error: function () {
-            alert('حدث خطأ أثناء تحديث الحالة');
-          }
-        });
-      });
+          
     });
     $("#soldiersTable").DataTable({
   responsive: true,
@@ -186,6 +209,8 @@
   ]
 });
  </script>
-  
  
+  
+
+
 @endpush

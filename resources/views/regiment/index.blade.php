@@ -43,42 +43,14 @@
                   <tbody>
                   @foreach ($regiments as $regiment)
                 <tr>
-                <!-- <td>
-                <a href="{{ route('regiments.show', $regiment->id) }}">    
-    {{ $regiment->id}}
-
-</a>
-        </td> -->
+                
     <td style="text-align: center;">
 
 <a href="{{ route('regiments.show', $regiment->id) }}" class="btn btn-outline-primary" style="width: 100%; height: 4rem; font-weight: bold; font-size: 1.4rem;" >
              {{$regiment->name}}
             </a>
 </td>
-<!-- 
-    <td>
-    <a href="{{ route('regiments.show', $regiment->id) }}">    
-    {{ $regiment->name }}
-
-
-</a>
-</td> -->
-    <!-- <td>
-    <a href="{{ route('regiments.show', $regiment->id) }}">    
-    {{ $regiment->created_at }}
-    
-
-
-</a>
-</td> -->
-    <!-- <td>
-    <a href="{{ route('regiments.show', $regiment->id) }}">    
-{{ $regiment->updated_at }}
-    
-
-
-</a>
-</td> -->
+ 
                 </tr>
                 
                 @endforeach

@@ -45,13 +45,15 @@ class BatchesController extends Controller
        $soldiers = Soldier::with('regiment', 'authority', 'batch')
                            ->where('batch_id', $batchId) // تصفية الجنود بناءً على batch_id
                            ->get();
-
+                           $batchname = Batch::with('soldiers')->findOrFail($batchId);
         // جلب جميع الدفعات لتوفيرها في واجهة المستخدم
         $regiments = Regiment::select('id', 'name')->get();
         $batches = Batch::select('id', 'name')->get(); // جلب جميع الدفعات
+        // $batchname = Batch::find($batchId); // جلب جميع الدفعات
+
 
         // إرجاع العرض مع الجنود والدفعات
-        return view('batches.show', compact('soldiers', 'regiments', 'batches','batchId'));
+        return view('batches.show', compact('soldiers', 'regiments', 'batchname','batches','batchId'));
     }
     
 

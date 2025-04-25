@@ -16,6 +16,13 @@
         <div class="card-header">
           <!-- <h3 class="card-title">DataTable with default features</h3> -->
           <a href="{{ route('soldiers.create') }}" class="btn btn-success mb-3">➕ إضافة جندي جديد</a>
+          <form action="{{ route('soldiers.deleteOnLeave') }}" method="POST" style="display:inline;">
+    @csrf
+    <button type="submit" class="btn btn-danger mb-3"
+            onclick="return confirm('هل متأكد من حذف جميع الجنود في الإجازة؟');">
+        حذف الجنود في الإجازة
+    </button>
+</form>
         </div>
           
           <!-- /.card-header -->
@@ -28,22 +35,24 @@
               <th>تاريخ بدايه الاجازه</th>
               <th>يوم العوده</th>
               <th>السرية</th>
+              <th>الوظيفة</th>
          
             </tr>
             </thead>
             <tbody>
             @foreach ($levees as $levee)
-        <tr>
-          <td>{{ $levee->soldier->id }}</td>
-          <td>{{  $levee->soldier->name }}</td>
-          <td>{{  $levee->start_date }}</td>
-          <td>{{  $levee->end_date }}</td>
-          <td>{{  $levee->soldier->regiment->name}}</td>
- 
+<tr>
+  <td>{{ $levee->soldier->id }}</td>
+  <td>{{ $levee->soldier->name }}</td>
+  <td>{{ $levee->start_date }}</td>
+  <td>{{ $levee->end_date }}</td>
+  <td>{{ $levee->soldier->regiment->name }}</td>
+  <td>{{ $levee->soldier->job->name ?? 'غير محددة' }}</td>
+</tr>
+@endforeach
 
- 
-        </tr>
-      @endforeach
+
+     
             </tbody>
 
           </table>

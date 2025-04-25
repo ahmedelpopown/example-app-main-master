@@ -13,7 +13,7 @@ class JobSeeder extends Seeder
      */
     public function run()
     {
-        $jobs = ['سائق', 'ممرض', 'فني', 'كاتب', 'طباخ', 'حارس'];
+        $jobs = ['تحريات', 'عمليات', 'شؤن', 'مطبخ مجندين', 'مطبخ ظباط', 'بوفية'];
 
         foreach ($jobs as $job) {
             Job::create(['name' => $job]);

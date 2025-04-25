@@ -41,6 +41,7 @@
                                         </th>
                                         <th>ID</th>
                                         <th>الاسم</th>
+                                        <th>صورة</th>
                                         <th>رقم الشرطة</th>
                                         <th>الرقم القومي</th>
                                         <th>تاريخ التجنيد</th>
@@ -66,6 +67,13 @@
                                         </td>
                                         <td>{{ $soldier->id }}</td>
                                         <td>{{ $soldier->name }}</td>
+                                        <td>
+                    @if($soldier->image)
+                      <img src="{{ asset('storage/' . $soldier->image) }}" width="80" alt="صورة">
+                    @else
+                      لا توجد صورة
+                    @endif
+                  </td>
                                         <td>{{ $soldier->police_number }}</td>
                                         <td>{{ $soldier->national_id }}</td>
                                         <td>{{ $soldier->date_of_conscription }}</td>
@@ -74,7 +82,7 @@
                                         <td>{{ $soldier->phone_number }}</td>
                                         <td>{{ $soldier->medical_condition }}</td>
                                         <td>{{ $soldier->confidentiality }}</td>
-                                        <td>{{ $soldier->job }}</td>
+                                        <td>{{ $soldier->job->name }}</td>
                                         <td>{{ $soldier->notes }}</td>
                                         <td>{{ $soldier->special_case }}</td>
                                         <td>{{ $soldier->start_date }}</td>

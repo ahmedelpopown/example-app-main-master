@@ -10,7 +10,8 @@ use App\Models\Job;
  use App\Models\Leave;
 use App\Models\Regiment;
 use App\Models\Soldier;
-use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
+ use Illuminate\Http\Request;
 use Intervention\Image\Drivers\Gd\Driver;
  use Intervention\Image\ImageManager;
  use Illuminate\Support\Facades\Storage;
@@ -44,21 +45,20 @@ class SoldiersController extends Controller
         return view('soldiers-data.index', compact('soldiers', 'regiments'));
     }
 
-    public function updateStatus(Request $request, $id)
+    public function updateStatus(Request $request, Soldier $soldier)
     {
-        $soldier = Soldier::find($id);
+        $request->validate([
+            'status' => 'required|in:working,leave',
+        ]);
     
-        if (!$soldier) {
-            return response()->json(['success' => false, 'message' => 'الجندي غير موجود']);
-        }
+        $soldier->update([
+            'status' => $request->status,
+        ]);
     
-        // تحديث الحالة
-        $soldier->status = $request->status;
-        $soldier->save();
-    
-        return response()->json(['success' => true, 'message' => 'تم تحديث الحالة']);
+        return redirect()
+            ->back()
+            ->with('success', 'تم تحديث حالة الجندي بنجاح');
     }
-    
     
     
 
@@ -103,7 +103,7 @@ class SoldiersController extends Controller
     
         Soldier::create($data); // ✅ الصح
     
-        return redirect()->route('soldiers.index')->with('success', 'تم إضافة الجندي بنجاح');
+        return redirect()->route('soldiers.create')->with('success', 'تم إضافة الجندي بنجاح');
      }
      
 
@@ -205,6 +205,13 @@ class SoldiersController extends Controller
         return redirect()->route('soldiers.index')->with('success', 'تم حذف الجندي بنجاح');
     }
 
- 
+
+    public function deleteOnLeave(): RedirectResponse
+    {
+        // حذف كل الجنود اللي status بتاعهم 'leave'
+        Soldier::where('status', 'leave')->delete();
+
+        return redirect()->back()->with('success', 'تم حذف جميع الجنود في الإجازة.');
+    }
 
 }
