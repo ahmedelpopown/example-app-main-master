@@ -7,11 +7,13 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col-12">
-
         <!-- الكارت الرئيسي -->
         <div class="card">
           <div class="card-header text-right">
             <a href="{{ route('soldiers.create') }}" class="btn btn-success mb-3">➕ إضافة جندي جديد</a>
+            <button type="button" class="btn btn-info mb-3" data-toggle="modal" data-target="#bulkLeaveModal">
+              تحديث إجازات جماعي
+            </button>
           </div>
 
           <!-- فلتر عرض الجنود في إجازة -->
@@ -28,6 +30,7 @@
             <table id="soldiersTable" class="table table-bordered table-striped text-center">
               <thead>
                 <tr>
+                  <th><input type="checkbox" id="selectAll"></th>
                   <th>ID</th>
                   <th>الاسم</th>
                   <th>الصورة</th>
@@ -45,13 +48,13 @@
                   <th>ملاحظات</th>
                   <th>الحالة</th>
                   <th>العمليات</th>
-                  <th>تغيير الحالة</th>
                   <th>حالة خاصة</th>
                 </tr>
               </thead>
               <tbody>
                 @foreach ($soldiers as $soldier)
                 <tr>
+                  <td><input type="checkbox" class="row-checkbox" value="{{ $soldier->id }}"></td>
                   <td>{{ $soldier->id }}</td>
                   <td>{{ $soldier->name }}</td>
                   <td>
@@ -82,10 +85,6 @@
                       <button class="btn btn-danger btn-sm" onclick="return confirm('هل أنت متأكد من الحذف؟')">حذف</button>
                     </form>
                   </td>
-                  <td>
-            
-
-    </td>
                   <td>{{ $soldier->special_case }}</td>
                 </tr>
                 @endforeach
@@ -93,124 +92,147 @@
             </table>
           </div>
         </div>
-
       </div>
     </div>
   </div>
 </section>
+
+<!-- Modal لتحديد مواعيد الإجازة -->
+<div class="modal fade" id="bulkLeaveModal" tabindex="-1" role="dialog" aria-labelledby="bulkLeaveModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="bulkLeaveModalLabel">تحديد مواعيد الإجازة</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form id="bulkLeaveForm" action="{{ route('soldiers-data.bulkLeave') }}" method="POST">
+        @csrf
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="startLeave">تاريخ بداية الإجازة</label>
+            <input type="date" class="form-control" id="startLeave" name="start_leave" required>
+          </div>
+          <div class="form-group">
+            <label for="endLeave">تاريخ نهاية الإجازة</label>
+            <input type="date" class="form-control" id="endLeave" name="endLeave" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">إلغاء</button>
+          <button type="submit" class="btn btn-primary">تحديث الإجازات</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 @endsection
 
 @push('scripts-database')
-
+<!-- jQuery -->
+<script src="{{ asset('dashboard/plugins/jquery/jquery.min.js') }}"></script>
+<!-- Bootstrap 4 -->
+<script src="{{asset('dashboard/plugins/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
+<!-- DataTables  & dashboard/Plugins -->
+<script src="{{ asset('dashboard/plugins/datatables/jquery.dataTables.min.js') }}"></script>
+<script src="{{ asset('dashboard/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
+<script src="{{ asset('dashboard/plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
+<script src="{{ asset('dashboard/plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
+<script src="{{ asset('dashboard/plugins/datatables-buttons/js/dataTables.buttons.min.js') }}"></script>
+<script src="{{ asset('dashboard/plugins/datatables-buttons/js/buttons.bootstrap4.min.js') }}"></script>
+<script src="{{ asset('dashboard/plugins/jszip/jszip.min.js') }}"></script>
+<script src="{{ asset('dashboard/plugins/pdfmake/pdfmake.min.js') }}"></script>
+<script src="{{ asset('dashboard/plugins/pdfmake/vfs_fonts.js') }}"></script>
+<script src="{{ asset('dashboard/plugins/datatables-buttons/js/buttons.html5.min.js') }}"></script>
+<script src="{{ asset('dashboard/plugins/datatables-buttons/js/buttons.print.min.js') }}"></script>
+<script src="{{ asset('dashboard/plugins/datatables-buttons/js/buttons.colVis.min.js') }}"></script>
+<!-- AdminLTE App -->
+<script src="{{ asset('dashboard/dist/js/adminlte.min.js') }}"></script>
 
 <script>
 $(document).ready(function() {
+  // تحديد/إلغاء تحديد كل الصفوف
+  $('#selectAll').click(function() {
+    $('.row-checkbox').prop('checked', this.checked);
+  });
 
-// نتأكد إننا بنستقبل event التغيير على أي select جوا الفورم
-$('.update-status-form').on('change', '.status-select', function() {
-  // نجيب القيمة الجديدة
-  // const status = $(this).val();
+  // إعداد DataTable
+  var table = $("#soldiersTable").DataTable({
+    responsive: true,
+    lengthChange: true,
+    pageLength: 50,
+    autoWidth: false,
+    scrollX: true,
+    language: {
+      url: "//cdn.datatables.net/plug-ins/1.13.4/i18n/ar.json"
+    },
+    dom: '<"top"Bfrtip><"bottom"lip>',
+    buttons: [
+      { 
+        extend: 'colvis',
+        text: '🧩 أعمدة',
+        columns: ':not(:first):not(:last)' 
+      },
+      { extend: 'copy', text: '📋 نسخ' },
+      { extend: 'excel', text: '📥 Excel' },
+      { extend: 'pdf', text: '📄 PDF' },
+      { extend: 'print', text: '🖨️ طباعة' }
+    ],
+    columnDefs: [
+      { orderable: false, targets: [0, 17] }, // تعطيل الترتيب لأعمدة الاختيار والعمليات
+      { width: '30px', targets: 0 }, // تحديد عرض عمود الاختيار
+      { width: '80px', targets: 3 }  // تحديد عرض عمود الصورة
+    ]
+  });
 
-  // نجيب الـ form والأي دي منه
-  // const form = $(this).closest('.update-status-form');
-  // const id   = form.data('id');
-
-  // console.log('Updating soldier', id, 'to status', status);
-
-  // نبعت الطلب
-  // $.ajax({
-  //   url: `/soldiers/${id}/status`,
-  //   method: 'POST',
-  //   data: {
-  //     _token: $('meta[name="csrf-token"]').attr('content'),
-  //     status: status
-  //   },
-  //   success: function(response) {
-  //     console.log('Server responded:', response);
-  //     if (response.success) {
-  //       alert(response.message);
-  //     } else {
-  //       alert('حصل خطأ: ' + response.message);
-  //     }
-  //   },
-  //   error: function(xhr) {
-  //     console.error('AJAX error:', xhr.responseText);
-  //     alert('فشل الاتصال بالسيرفر');
-  //   }
-  // });
-
-});
-
-});
-
-
-</script>
-  <!-- jQuery -->
-  <script src="{{ asset('dashboard/plugins/jquery/jquery.min.js') }}"></script>
-  <!-- Bootstrap 4 -->
-  <script src="{{asset('dashboard/plugins/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
-  <!-- DataTables  & dashboard/Plugins -->
-  <script src="{{ asset('dashboard/plugins/datatables/jquery.dataTables.min.js') }}"></script>
-  <script src="{{ asset('dashboard/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
-  <script src="{{ asset('dashboard/plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
-  <script src="{{ asset('dashboard/plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
-  <script src="{{ asset('dashboard/plugins/datatables-buttons/js/dataTables.buttons.min.js') }}"></script>
-  <script src="{{ asset('dashboard/plugins/datatables-buttons/js/buttons.bootstrap4.min.js') }}"></script>
-  <script src="{{ asset('dashboard/plugins/jszip/jszip.min.js') }}"></script>
-  <script src="{{ asset('dashboard/plugins/pdfmake/pdfmake.min.js') }}"></script>
-  <script src="{{ asset('dashboard/plugins/pdfmake/vfs_fonts.js') }}"></script>
-  <script src="{{ asset('dashboard/plugins/datatables-buttons/js/buttons.html5.min.js') }}"></script>
-  <script src="{{ asset('dashboard/plugins/datatables-buttons/js/buttons.print.min.js') }}"></script>
-  <script src="{{ asset('dashboard/plugins/datatables-buttons/js/buttons.colVis.min.js') }}"></script>
-  <script src="{{ asset('dashboard/js/showpassword.js') }}"></script>
-  <!-- AdminLTE App -->
-  <script src="{{ asset('dashboard/dist/js/adminlte.min.js') }}"></script>
-  <!-- AdminLTE for demo purposes -->
-  <script src="{{ asset('dashboard/dist/js/demo.js') }}"></script>
-
-
-
-  <!-- Page specific script -->
-  <script>
-
-
-
-    $(function () {
-    $("#example1").DataTable({
-      "responsive": true, "lengthChange": false, "autoWidth": false,
-      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-    $('#example2').DataTable({
-      "paging": true,
-      "lengthChange": false,
-      "searching": false,
-      "ordering": true,
-      "info": true,
-      "autoWidth": false,
-      "responsive": true,
-    });
-          // تحديث الحالة باستخدام AJAX
-          
-    });
-    $("#soldiersTable").DataTable({
-  responsive: true,
-  lengthChange: false,
-  autoWidth: false,
-  language: {
-    url: "//cdn.datatables.net/plug-ins/1.13.4/i18n/ar.json"
-  },
-  dom: 'Bfrtip', // دي بتحدد مكان ظهور الأزرار
-  buttons: [
-    { extend: 'copy', text: '📋 نسخ' },
-    { extend: 'excel', text: '📥 Excel' },
-    { extend: 'pdf', text: '📄 PDF' },
-    { extend: 'print', text: '🖨️ طباعة' },
-    { extend: 'colvis', text: '🧩 إظهار/إخفاء الأعمدة' }
-  ]
-});
- </script>
- 
   
+})
+$('#bulkLeaveForm').submit(function(e) {
+    e.preventDefault();
+    
+    // جمع الجنود المحددين
+    var selected = [];
+    $('.row-checkbox:checked').each(function() {
+        selected.push($(this).val());
+    });
 
+    if (selected.length === 0) {
+        alert('الرجاء تحديد جنود لتحديث حالتهم');
+        return false;
+    }
 
+    // إعداد البيانات
+    var formData = {
+        soldiers: selected,
+        start_leave: $('#startLeave').val(),
+        end_leave: $('#endLeave').val(),
+        _token: $('meta[name="csrf-token"]').attr('content')
+    };
+
+    // إرسال البيانات
+    $.ajax({
+        url: $(this).attr('action'),
+        type: 'POST',
+        data: formData,
+        dataType: 'json',
+        success: function(response) {
+            if (response.success) {
+                alert(response.message);
+                location.reload();
+            } else {
+                alert(response.message);
+            }
+        },
+        error: function(xhr) {
+            var errorMsg = 'حدث خطأ غير متوقع';
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+                errorMsg = xhr.responseJSON.message;
+            }
+            alert(errorMsg);
+            console.error(xhr.responseText);
+        }
+    });
+});
+</script>
 @endpush

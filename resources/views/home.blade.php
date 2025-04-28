@@ -19,7 +19,7 @@
               </div>
               <div class="icon">
                 <i class="ion ion-stats-bars"></i>
-                <h5 style="color: aliceblue; padding: 12PX;">{{"  عدد الجنود  :" .$RegimentCount}} </h5>
+                <h5 style="color: aliceblue; padding: 12PX;">{{"  عدد السرايا  :" .$RegimentCount}} </h5>
               </div>
               <h2>
                 

@@ -91,4 +91,18 @@ class RegimentController extends Controller
     {
         //
     }
+    public function updateStatus(Request $request, Soldier $soldier)
+    {
+        $request->validate([
+            'status' => 'required|in:working,leave',
+        ]);
+    
+        $soldier->update([
+            'status' => $request->status,
+        ]);
+    
+        return redirect()
+            ->back()
+            ->with('success', 'تم تحديث حالة الجندي بنجاح');
+    }
 }

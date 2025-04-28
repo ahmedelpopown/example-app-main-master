@@ -10,13 +10,13 @@ use App\Http\Controllers\SoldiersDataController;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::resource('regiment', RegimentController::class);
- Route::resource('batches', BatchesController::class);
- Route::post('/soldiers/delete-on-leave', [SoldiersController::class, 'deleteOnLeave'])
-    ->name('soldiers.deleteOnLeave');
+Route::resource('batches', BatchesController::class);
+Route::post('/soldiers/delete-on-leave', [SoldiersController::class, 'deleteOnLeave'])
+->name('soldiers.deleteOnLeave');
 Route::resource('soldiers', SoldiersController::class);
-Route::post('regiments/bulkLeave', [RegimentController::class, 'bulkLeave'])->name('regiments.bulkLeave');
 Route::get('/regiments/{id}', [RegimentController::class, 'show'])->name('regiments.show');
 Route::resource('soldiers-data', SoldiersDataController::class);
+Route::post('/soldiers-data/bulk-leave', [SoldiersDataController::class, 'bulkLeave'])->name('soldiers-data.bulkLeave');
 Route::resource('leaves', LeavesController::class);
   Route::patch('/soldiers/update-status/{soldier}', [SoldiersController::class, 'updateStatus'])->name('soldiers.updateStatus');
  ;

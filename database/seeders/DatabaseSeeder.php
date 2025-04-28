@@ -24,11 +24,9 @@ class DatabaseSeeder extends Seeder
         $this->call([
             AuthoritySeeder::class,
             BatchSeeder::class,
-    RegimentSeeder::class,
-    SoldierSeeder::class,
-    JobSeeder::class,
-
-
+            RegimentSeeder::class,
+            JobSeeder::class,
+            SoldierSeeder::class,  // لازم يبقى آخر واحد عشان يعتمد على البياانات اللي اتنشأت قبل كده
         ]);
     }
 }

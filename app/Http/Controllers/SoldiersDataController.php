@@ -75,4 +75,35 @@ class SoldiersDataController extends Controller
         //
     }
 
+    public function bulkLeave(Request $request)
+    {
+        try {
+            // التحقق من البيانات
+            $validated = $request->validate([
+                'soldiers' => 'required|array|min:1',
+                'soldiers.*' => 'integer|exists:soldiers,id',
+                'start_leave' => 'required|date',
+                'endLeave' => 'required|date|after:start_leave'
+            ]);
+    
+            // تحديث البيانات
+            $updated = Soldier::whereIn('id', $request->soldiers)
+                ->update([
+                    'status' => 'leave',
+                    'start_leave' => $request->start_leave,
+                    'endLeave' => $request->end_leave
+                ]);
+    
+            return response()->json([
+                'success' => true,
+                'message' => 'تم تحديث '.$updated.' سجلات بنجاح'
+            ]);
+    
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'حدث خطأ: '.$e->getMessage()
+            ], 500);
+        }
+    }
  }

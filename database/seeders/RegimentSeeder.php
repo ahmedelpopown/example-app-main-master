@@ -2,10 +2,12 @@
 
 namespace Database\Seeders;
 
+use App\Models\Authority;
 use App\Models\Regiment;
 use App\Models\Soldier;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class RegimentSeeder extends Seeder
 {
@@ -14,17 +16,9 @@ class RegimentSeeder extends Seeder
      */
     public function run(): void
     {
-        Regiment::factory(10)->create();
-        $regiments = Regiment::all();
-
-        if ($regiments->count() == 0) {
-            throw new \Exception('لا يوجد سرايا في قاعدة البيانات. من فضلك شغّل RegimentSeeder أولاً.');
+  $regiments = ['أول سرية','ثاني سرية','ثالث سرية'];
+        foreach ($regiments as $name) {
+            Regiment::create(['name' => $name]);
         }
-        
-        Soldier::factory(10)->create()->each(function ($soldier, $index) use ($regiments) {
-            $regiment = $regiments[$index % $regiments->count()];
-            $soldier->regiment()->associate($regiment);
-            $soldier->save();
-        });
     }
 }

@@ -25,7 +25,10 @@ class Soldier extends Model
         'regiment_id',
         'batch_id',
         'authority_id',
-        'image'
+        'image',
+        'status',
+        'start_leave',
+        'endLeave'
     ];
 
     protected $casts = [
