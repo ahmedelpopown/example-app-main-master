@@ -6,6 +6,7 @@ use App\Http\Controllers\LeavesController;
 use App\Http\Controllers\RegimentController;
 use App\Http\Controllers\SoldiersController;
 use App\Http\Controllers\SoldiersDataController;
+use App\Http\Controllers\VactionController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -18,6 +19,7 @@ Route::get('/regiments/{id}', [RegimentController::class, 'show'])->name('regime
 Route::resource('soldiers-data', SoldiersDataController::class);
 Route::post('/soldiers-data/bulk-leave', [SoldiersDataController::class, 'bulkLeave'])->name('soldiers-data.bulkLeave');
 Route::resource('leaves', LeavesController::class);
+Route::resource('vacation_permits', VactionController::class);
   Route::patch('/soldiers/update-status/{soldier}', [SoldiersController::class, 'updateStatus'])->name('soldiers.updateStatus');
  ;
  

@@ -82,6 +82,15 @@
               </p>
             </a>
           </li>
+          <li class="nav-item">
+            <a href="{{ route('vacation_permits.index') }}" class="nav-link">
+              <i class="nav-icon fas fa-th"></i>
+              <p>
+           تصاريح اجازه
+                <!-- <span class="right badge badge-danger">New</span> -->
+              </p>
+            </a>
+          </li>
            
         </ul>
       </nav>
